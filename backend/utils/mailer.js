@@ -64,15 +64,21 @@ async function sendOrderNotification(order) {
       <p style="font-size:18px;margin-top:16px;"><strong>Total (Cash on Delivery): ${formatCurrency(order.total)}</strong></p>
     </div>
   `;
+const transporter = getTransporter();
 
-  const transporter = getTransporter();
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("OWNER_EMAIL:", process.env.OWNER_EMAIL);
+console.log("Sending email...");
 
-  await transporter.sendMail({
-    from: `"Mobile Shop Orders" <${process.env.EMAIL_USER}>`,
-    to: ownerEmail,
-    subject: `New COD Order #${order.id} - ${formatCurrency(order.total)}`,
-    html,
-  });
-}
+await transporter.verify();
+console.log("SMTP Connected Successfully");
 
+await transporter.sendMail({
+  from: `"Mobile Shop Orders" <${process.env.EMAIL_USER}>`,
+  to: ownerEmail,
+  subject: `New COD Order #${order.id} - ${formatCurrency(order.total)}`,
+  html,
+});
+
+console.log("Email sent successfully");}
 module.exports = { sendOrderNotification };

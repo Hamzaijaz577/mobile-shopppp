@@ -69,8 +69,19 @@ const transporter = getTransporter();
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("OWNER_EMAIL:", process.env.OWNER_EMAIL);
 console.log("Sending email...");
+try {
+  const info = await transporter.sendMail({
+    from: `"Mobile Shop Orders" <${process.env.EMAIL_USER}>`,
+    to: ownerEmail,
+    subject: `New COD Order #${order.id} - ${formatCurrency(order.total)}`,
+    html,
+  });
 
-await transporter.verify();
+  console.log("Email sent:", info.messageId);
+} catch (err) {
+  console.error("SMTP ERROR:", err);
+  throw err;
+}
 console.log("SMTP Connected Successfully");
 
 await transporter.sendMail({

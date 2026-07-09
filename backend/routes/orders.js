@@ -80,15 +80,19 @@ router.post("/", async (req, res) => {
 
     // Try to email the shop owner. Order still succeeds even if email fails,
     // so a missing/incorrect .env config doesn't block customers from ordering.
-    let emailSent = true;
-    try {
-      await sendOrderNotification(order);
-    } catch (emailError) {
-      emailSent = false;
-      console.error("Failed to send order notification email:", emailError.message);
-    }
+    // Customer ko turant response do
+res.status(201).json({
+  order,
+  emailSent: true,
+});
 
-    res.status(201).json({ order, emailSent });
+// Email background mein bhejo
+sendOrderNotification(order).catch((emailError) => {
+  console.error(
+    "Failed to send order notification email:",
+    emailError.message
+  );
+});
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Something went wrong while placing your order." });
